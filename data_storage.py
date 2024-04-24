@@ -3,28 +3,24 @@ from typing import Dict
 
 FILE_NAME = 'results.csv'
 
-def save_votes(votes: Dict[str, int]) -> None:
+def append_session_results(votes: Dict[str, int]) -> None:
     """
-    Saves the vote count to a CSV file.
-
-    Args:
-        votes (Dict[str, int]): A dictionary containing candidate names as keys and vote counts as values.
+    Appends the current session's results to a CSV file.
     """
-    with open(FILE_NAME, mode='w', newline='') as file:
+    with open(FILE_NAME, 'a', newline='') as file:  # 'a' is for append mode
         writer = csv.writer(file)
-        for candidate, count in votes.items():
-            writer.writerow([candidate, count])
+        john_votes = votes.get('John', 0)
+        jane_votes = votes.get('Jane', 0)
+        total_votes = john_votes + jane_votes
+        writer.writerow(['John', john_votes, 'Jane', jane_votes, 'Total', total_votes])
 
 def load_votes() -> Dict[str, int]:
     """
     Loads the vote count from a CSV file.
-
-    Returns:
-        Dict[str, int]: A dictionary containing candidate names as keys and vote counts as values.
     """
     try:
-        with open(FILE_NAME, mode='r', newline='') as file:
+        with open(FILE_NAME, 'r', newline='') as file:
             reader = csv.reader(file)
-            return {rows[0]: int(rows[1]) for rows in reader}
+            return {row[0]: int(row[1]) for row in reader}
     except FileNotFoundError:
         return {"John": 0, "Jane": 0}
